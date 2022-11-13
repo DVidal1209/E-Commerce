@@ -22,7 +22,7 @@ router.get('/:id', async (req, res) => {
       include: [{ model: Product, through: ProductTag, as: 'products'}]
     });
       if(!tagData){
-        res.status(404).json({ message: "No tag found under this id"})
+        res.status(404).json({ message: `No tag found at id: ${req.body.id}`})
       } else {
         res.status(200).json(tagData);
       }
@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try{
     if (!req.body.tag_name){
-      res.status(400).send("Request missing tag_name")
+      res.status(400).json({message: "Request missing tag_name"})
       return
     }
     const tagData = await Tag.update({
@@ -75,7 +75,11 @@ router.delete('/:id', async (req, res) => {
          id: req.params.id
       }
     })
-    res.status(200).json(tagData);
+    if(!tagData){
+      res.status(404).json({message: `No tag found at id: ${req.params.id}`})
+    }else {
+      res.status(200).json(tagData);
+    }
   }
   catch (err) {
     res.status(500).json(err)
