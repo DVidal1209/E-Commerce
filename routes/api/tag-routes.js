@@ -48,6 +48,10 @@ router.post('/', async (req, res) => {
 // Route to update a tag given the id
 router.put('/:id', async (req, res) => {
   try{
+    if (!req.body.tag_name){
+      res.status(400).send("Request missing tag_name")
+      return
+    }
     const tagData = await Tag.update({
       tag_name: req.body.tag_name
     },
