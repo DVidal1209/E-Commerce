@@ -1,11 +1,8 @@
 const router = require('express').Router();
 const { Category, Product } = require('../../models');
 
-// The `/api/categories` endpoint
-
+// Route to get all add Categories with their associated Products
 router.get('/', async (req, res) => {
-  // find all categories
-  // be sure to include its associated Products
   try {
     const categoryData = await Category.findAll({
       include: [{ model: Product }]
@@ -17,16 +14,11 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Route to get a Categories with it's associated Products given a category id
 router.get('/:id', async (req, res) => {
-  // find one category by its `id` value
-  // be sure to include its associated Products
   try {
-    const categoryData = await Category.findByPk({
+    const categoryData = await Category.findByPk(req.params.id, {
       include: [{ model: Product }]
-    }, {
-      where: {
-        id: req.params.id
-      }
     })
     if(!categoryData) {
       res.status(404).json({message: `No category at id: ${req.params.id} found`})
@@ -39,12 +31,10 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Route to create a new category
 router.post('/', async (req, res) => {
-  // create a new category
   try{
-    const categoryData = await Category.create({
-      category_name: req.body.category_name
-    })
+    const categoryData = await Category.create(req.body)
     if (!categoryData){
       res.status(400).json({ message: "No category_name was entered."})
     } else {
@@ -56,15 +46,13 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Route to update a category's name given it's id
 router.put('/:id', async (req, res) => {
-  // update a category by its `id` value
   try{
     if (!req.body.category_name){
       res.status(400).json({ message: `request is missing category_name`})
     }
-    const categoryData = await Category.update({
-      category_name : req.body.category_name
-    },
+    const categoryData = await Category.update(req.body,
     {
       where: {
         id: req.params.id
@@ -81,8 +69,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// Route to delete a category given it's id
 router.delete('/:id', async (req, res) => {
-  // delete a category by its `id` value
   try{
     const categoryData = await Category.destroy({
       where: {

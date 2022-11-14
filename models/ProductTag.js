@@ -1,12 +1,12 @@
 const { Model, DataTypes } = require('sequelize');
-
 const sequelize = require('../config/connection');
 
+// Creation of ProductTag model using sequelize. This model is used to manage the many to many relationship between Product and Tag
 class ProductTag extends Model {}
 
 ProductTag.init(
   {
-    // define columns
+    // definition of ProductTag columns
     id : {
       type: DataTypes.INTEGER,
       allowNull: false,
