@@ -31,11 +31,11 @@ Once done you will have to create the database and seed the database.
 
 To do so log in to the mysql cmd / terminal and enter the command:
     
-    "source db/schema.sql"
+    source db/schema.sql
 
 Once completed exit the mysql cml/terminal and run this command in the normal cmd/terminal:
 
-    "npm run seed"
+    npm run seed
 
 Once done you can go ahead and exit the sql termina and execute the line "npm start server.js".
 
