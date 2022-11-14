@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
       include: [{ model: Category }, { model: Tag, through: ProductTag, as: 'product_tags_info' }]
     }
     )
-    res.json(productData)
+    res.status(200).json(productData)
   }
   catch (err) {
     res.status(500).json(err);
@@ -107,7 +107,7 @@ router.delete('/:id', async (req, res) => {
       }
     })
     if (!productData) {
-      res.status(400).json({message: `Product at id: ${req.params.id} not found`})
+      res.status(404).json({message: `Product at id: ${req.params.id} not found`})
     } else {
       res.status(200).json(productData);
     }

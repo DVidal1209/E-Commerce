@@ -51,6 +51,7 @@ router.put('/:id', async (req, res) => {
   try{
     if (!req.body.category_name){
       res.status(400).json({ message: `request is missing category_name`})
+      return
     }
     const categoryData = await Category.update(req.body,
     {
