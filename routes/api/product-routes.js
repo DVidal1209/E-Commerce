@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { Product, Category, Tag, ProductTag } = require('../../models');
+const { rawAttributes } = require('../../models/Product');
 
 // Route to get all products along with their category and tag data
 router.get('/', async (req, res) => {
@@ -34,27 +35,27 @@ router.get('/:id', async (req, res) => {
 });
 
 // Route to create a new product
-router.post('/', (req, res) => {
-  Product.create(req.body)
-    .then((product) => {
-      // if there's product tags, we need to create pairings to bulk create in the ProductTag model
-      if (req.body.tagIds.length) {
-        const productTagIdArr = req.body.tagIds.map((tag_id) => {
-          return {
-            product_id: product.id,
-            tag_id,
-          };
+router.post('/', async (req, res) => {
+  try{
+    const productData = await Product.create(req.body);
+    if(req.body.tagIds.length){
+      let productTagIdArr = [];
+      for (let tagId of req.body.tagIds){
+        productTagIdArr.push({
+          product_id: productData.id,
+          tag_id: tagId
         });
-        return ProductTag.bulkCreate(productTagIdArr);
       }
-      // if no product tags, just respond
-      res.status(200).json(product);
-    })
-    .then((productTagIds) => res.status(200).json(productTagIds))
-    .catch((err) => {
-      console.log(err);
-      res.status(400).json(err);
-    });
+      let productTagIds = await ProductTag.bulkCreate(productTagIdArr);
+      res.status(200).json(productTagIds);
+      return;
+    } else {
+      res.status(200).json(productData)
+    }
+  }
+  catch (err) {
+    res.status(500).json(err)
+  }
 });
 
 // Route to update a product given it's id
